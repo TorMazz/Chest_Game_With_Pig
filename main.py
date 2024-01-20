@@ -193,8 +193,8 @@ size = wigth, height = 1920, 1020
 screen = pygame.display.set_mode(size)
 
 # создания счётчиков сундучков
-count_player = 0
-count_pig = 0
+count_player = 4
+count_pig = 8
 
 #создание текста для подсчёта количества сундучков
 counts = pygame.font.Font(None, 45)
@@ -240,7 +240,7 @@ while running:  # стартовое окно
     pygame.display.flip()
     clock.tick(30)
 
-running = True
+running = False
 
 all_cards = [str(i) for i in range(2, 11)] * 4 + [i for i in ['J', 'Q', 'K', 'T']] * 4
 pig_cards = {}
@@ -461,7 +461,7 @@ while True:
                 win_text = f.render("Ничья!", True, (0, 0, 255), (0, 0, 0))
                 win_rect = win_text.get_rect(center=(950, 630))
                 win_rect = win_text.get_rect(center=(950, 630))
-                screen.blit(win_text, win_rect)
+            screen.blit(win_text, win_rect)
             end_buttons.draw(screen)
             screen.blit(text, text_rect)
         screen.blit(mouse_on, pygame.mouse.get_pos())
