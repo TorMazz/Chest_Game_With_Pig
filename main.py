@@ -5,7 +5,7 @@ import time
 import pygame
 
 
-class End_Screen(pygame.sprite.Sprite):#создание окна game over
+class End_Screen(pygame.sprite.Sprite):  # создание окна game over
     def __init__(self, sprite):
         super().__init__(sprite)
         self.image = pygame.image.load('end_screen.png')
@@ -13,16 +13,16 @@ class End_Screen(pygame.sprite.Sprite):#создание окна game over
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = 0, -1080
 
-    def update(self):# анимация движения окна
+    def update(self):  # анимация движения окна
         if self.rect.y != 0:
             self.rect.y += 12
 
-    def proove(self): # проверка на расположение окна
+    def proove(self):  # проверка на расположение окна
         if self.rect.y == 0:
             return 1
 
 
-class End_Buttons(pygame.sprite.Sprite):# создание кнопок restar и exit
+class End_Buttons(pygame.sprite.Sprite):  # создание кнопок restar и exit
     def __init__(self, sprite, id):
         super().__init__()
         self.id = id
@@ -38,14 +38,14 @@ class End_Buttons(pygame.sprite.Sprite):# создание кнопок restar �
             self.rect.x, self.rect.y = 1100, 710
         self.add(sprite)
 
-    def update(self, *args): #определение нажатие кнопки
+    def update(self, *args):  # определение нажатие кнопки
         if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
             if self.id == 1:
                 return 1
             return 2
 
 
-class Arrow(pygame.sprite.Sprite):# создание стрелку указывающая на колоду карт
+class Arrow(pygame.sprite.Sprite):  # создание стрелку указывающая на колоду карт
     def __init__(self, sprite):
         super().__init__()
         self.image = pygame.image.load("ar.png")
@@ -56,7 +56,7 @@ class Arrow(pygame.sprite.Sprite):# создание стрелку указыв
         self.add(sprite)
         self.mn = 2
 
-    def update(self):# анимация движения кнопки
+    def update(self):  # анимация движения кнопки
         self.rect.y += self.mn
         if self.rect.y == 426:
             self.mn = -2
@@ -74,13 +74,13 @@ class Board(pygame.sprite.Sprite):  # спрайт доски
         self.add(sprite)
 
 
-class Buttons(pygame.sprite.Sprite):# создание кнопок при начале игры
+class Buttons(pygame.sprite.Sprite):  # создание кнопок при начале игры
     image_off = pygame.image.load("play_button_off.png")
     image_off = pygame.transform.scale(image_off, (500, 490))
     image = pygame.image.load("Button_play_on.png")
 
     def __init__(self, sprite, id):  # создание кнопок начального окна
-        super().__init__()
+        super().__init__(sprite)
         self.id = id
         if self.id == 1:  # Создание кнопки играть
             self.image = Buttons.image
@@ -111,7 +111,7 @@ class Pig(pygame.sprite.Sprite):  # создание свиньи
         self.rect.x = 236
         self.add(sprite)
 
-    def change_emojy(self, emojy):# изменение спрайтов свина
+    def change_emojy(self, emojy):  # изменение спрайтов свина
         if emojy == 'give card':
             self.image = pygame.image.load("give_card_to_player.png")
             self.image = pygame.transform.scale(self.image, (1448, 1080))
@@ -144,7 +144,7 @@ class Deck_Of_Card(pygame.sprite.Sprite):  # содание колоды кар�
         self.add(sprite)
 
 
-def flip(q): # смена кадра
+def flip(q):  # смена кадра
     pygame.display.flip()
     all_sprites.draw(screen)
     if not q:
@@ -154,7 +154,7 @@ def flip(q): # смена кадра
     time.sleep(0.5)
 
 
-def draw_the_cards():# рисовка карт
+def draw_the_cards():  # рисовка карт
     cords = 300
     for card in player_cards:
         if card != 'J' and card != 'Q' and card != 'K' and card != 'T':
@@ -183,7 +183,7 @@ def draw_the_cards():# рисовка карт
 # иницилизация pygame
 pygame.init()
 
-#создание стрелки
+# создание стрелки
 ar_sp = pygame.sprite.Group()
 arrow = Arrow(ar_sp)
 
@@ -193,10 +193,10 @@ size = wigth, height = 1920, 1020
 screen = pygame.display.set_mode(size)
 
 # создания счётчиков сундучков
-count_player = 4
-count_pig = 8
+count_player = 0
+count_pig = 0
 
-#создание текста для подсчёта количества сундучков
+# создание текста для подсчёта количества сундучков
 counts = pygame.font.Font(None, 45)
 rect_of_counts1 = pygame.Rect(0, 100, 200, 100)
 text_of_counts1 = counts.render("", True, (255, 255, 255), (0, 0, 0))
@@ -240,12 +240,47 @@ while running:  # стартовое окно
     pygame.display.flip()
     clock.tick(30)
 
-running = False
+running = True
+back_button.kill()
 
-all_cards = [str(i) for i in range(2, 11)] * 4 + [i for i in ['J', 'Q', 'K', 'T']] * 4
+fifty_two_cards = pygame.image.load('52_button.png')
+fifty_two_cards = pygame.transform.scale(fifty_two_cards, (500, 400))
+thirty_six = pygame.image.load('36_cards.png')
+thirty_six = pygame.transform.scale(thirty_six, (500, 400))
+rect_f = fifty_two_cards.get_rect()
+rect_f.x, rect_f.y = 500, 500
+rect_t = thirty_six.get_rect()
+rect_t.x, rect_t.y = 1000, 465
+cards_choose = True
+
+while running:
+    screen.fill([0, 0, 0])
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            if rect_f.collidepoint(pos):
+                running = False
+            elif rect_t.collidepoint(pos):
+                cards_choose = False
+                running = False
+
+    all_sprites.draw(screen)
+    screen.blit(fifty_two_cards, (500, 500))
+    screen.blit(thirty_six, (1000, 465))
+    screen.blit(mouse_on, pygame.mouse.get_pos())
+    pygame.display.flip()
+    clock.tick(30)
+running = True
+
+if cards_choose:
+    all_cards = [str(i) for i in range(2, 11)] * 4 + [i for i in ['J', 'Q', 'K', 'T']] * 4
+else:
+    all_cards = [str(i) for i in range(6, 11)] * 4 + [i for i in ['J', 'Q', 'K', 'T']] * 4
 pig_cards = {}
 player_cards = {}
-for i in range(7):# распределение карт свину и игроку
+for i in range(7):  # распределение карт свину и игроку
     card = random.choice(all_cards)
     if card not in pig_cards:
         pig_cards[card] = 1
@@ -259,7 +294,7 @@ for i in range(7):# распределение карт свину и игрок
         player_cards[card] += 1
     all_cards.remove(card)
 
-board = Board(all_sprites) # загрузка спрайтов карт
+board = Board(all_sprites)  # загрузка спрайтов карт
 two_cards = pygame.image.load("2_card.png")
 three_cards = pygame.image.load("3_card.png")
 four_cards = pygame.image.load("4_card.png")
@@ -304,7 +339,7 @@ while True:
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                if not take_the_card: # если наш ход
+                if not take_the_card:  # если наш ход
                     for card in range(len(sprites_of_cards)):
                         if rect_of_cards[card].collidepoint(pos) and turn:
                             check_pig_card = True
@@ -313,7 +348,7 @@ while True:
                             flip(False)
                             time.sleep(1)
                             current_card = text_of_cards[card]
-                else: # если не угадали карту
+                else:  # если не угадали карту
                     if deck_of_card.rect.collidepoint(pos) and not taken_card:
                         new_card = random.choice(all_cards)
                         if len(player_cards) == 8 and any(True for i in all_cards if i in player_cards):
@@ -336,7 +371,7 @@ while True:
         all_sprites.draw(screen)
         draw_the_cards()
 
-        if check_pig_card and turn:# проверка наличия карты у свина, замена спрайтов свина, условие что сейчас ход игрока
+        if check_pig_card and turn:  # проверка наличия карты у свина, замена спрайтов свина, условие что сейчас ход игрока
             pygame.draw.rect(screen, (0, 0, 0), rect_of_font)
             screen.blit(text, text.get_rect(center=rect_of_font.center))
             flip(False)
@@ -354,7 +389,7 @@ while True:
                         player_cards.pop(card)
                         count_player += 1
                         break
-            else:# если не угадали карту у свина, берём её из колоды(теперь можно брать карту из колоды)
+            else:  # если не угадали карту у свина, берём её из колоды(теперь можно брать карту из колоды)
                 text = font.render('-Нет Сэр, берите карту.', True, (255, 255, 255), (0, 0, 0))
                 flip(False)
                 time.sleep(1)
@@ -362,13 +397,13 @@ while True:
                 turn = False
             check_pig_card = False
 
-        if not turn and taken_card:# если сейчас ход свина и игрок взял карту из колоды
+        if not turn and taken_card:  # если сейчас ход свина и игрок взял карту из колоды
             cards = [i for i in pig_cards.keys()]
             card = random.choice(cards)
             text = font.render(f'-Cэр, у вас есть {card}?', True, (255, 255, 255), (0, 0, 0))
             flip(False)
             time.sleep(1)
-            if card in player_cards:#если свин угадал карту
+            if card in player_cards:  # если свин угадал карту
                 pig.change_emojy('see card')
                 flip(False)
                 time.sleep(1)
@@ -380,7 +415,7 @@ while True:
                 pig.change_emojy('usual')
                 flip(False)
                 time.sleep(1)
-            else:# если свин не угадал карту
+            else:  # если свин не угадал карту
                 text = font.render(f'-Нет, берите карту, мистер свин', True, (255, 255, 255), (0, 0, 0))
                 flip(False)
                 time.sleep(1)
@@ -423,7 +458,7 @@ while True:
         screen.blit(mouse_on, pygame.mouse.get_pos())
         pygame.display.flip()
         clock.tick(30)
-    #создание конечного окна с сообщением о выигрыше и количесв сундучков игрока и свина
+    # создание конечного окна с сообщением о выигрыше и количесв сундучков игрока и свина
     end_sprite = pygame.sprite.Group()
     end = End_Screen(end_sprite)
     end_buttons = pygame.sprite.Group()
@@ -439,22 +474,22 @@ while True:
     win_rect = win_text.get_rect(center=(960, 630))
     text_rect = text.get_rect(center=(1000, 700))
     end_bool = True
-    while end_bool:# конечное окно
+    while end_bool:  # конечное окно
         screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for button in end_buttons:
-                    if button.update(event) == 1:# начало новой игры
+                    if button.update(event) == 1:  # начало новой игры
                         end_bool = False
                         running = True
-                    elif button.update(event) == 2:#выход из игры
+                    elif button.update(event) == 2:  # выход из игры
                         pygame.quit()
 
         end_sprite.update()
         end_sprite.draw(screen)
-        if end.proove() == 1:# проверка на выигрыш
+        if end.proove() == 1:  # проверка на выигрыш
             if count_pig > count_player:
                 win_text = f.render("Свин выиграл!", True, (255, 0, 0), (0, 0, 0))
             elif count_player == count_pig:
